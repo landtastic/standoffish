@@ -234,6 +234,22 @@ const createExample = example => {
 
 const navigation = [
   {
+    name: 'Landz Menu',
+    // items: [
+    //   {
+    //     name: 'Cool stuff',
+    //     component: createExample(SearchBarExample)
+    //   },
+    //   {
+    //     name: 'Fun stuff',
+    //     component: ColorGuidelines,
+    //   },
+    // ],
+    items: [
+      SearchBarExample
+    ].map(example => createExample(example)),
+  },
+  {
     name: 'Guidelines',
     items: [
       {

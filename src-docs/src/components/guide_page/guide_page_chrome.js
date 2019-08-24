@@ -123,7 +123,6 @@ export class GuidePageChrome extends Component {
             button={button}
             isOpen={this.state.isPopoverOpen}
             closePopover={this.closePopover.bind(this)}>
-            <EuiPopoverTitle>Docs options</EuiPopoverTitle>
             <div className="guideOptionsPopover">
               <GuideThemeSelector
                 onToggleTheme={this.props.onToggleTheme}

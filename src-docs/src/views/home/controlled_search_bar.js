@@ -7,11 +7,10 @@ import {
   EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiCodeBlock,
-  EuiTitle,
   EuiSwitch,
   EuiBasicTable,
   EuiSearchBar,
+  EuiButton,
 } from '../../../../src/components';
 
 const random = new Random();
@@ -28,37 +27,6 @@ const types = ['dashboard', 'visualization', 'watch'];
 
 const users = ['dewey', 'wanda', 'carrie', 'jmack', 'gabic'];
 
-const topTracks = (artist) => fetch('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist='+ artist +'&autocorrect=1&api_key=946a0b231980d52f90b8a31e15bccb16&limit=40&format=json') //&callback=response
-      .then(function(response) {
-          if (response.status >= 400) {
-              throw new Error("Bad response from server");
-          }
-          return response.json();
-      })
-      .then(function(response) {
-          console.log(response.toptracks.track);
-          return response.toptracks.track;
-          // return {
-          //   id,
-          //   response,
-          // };
-      });
-
-// const items = times(10, id => {
-//   return {
-//      // topTracks.name
-//         id,
-//         status: topTracks.name,
-//         type: topTracks.name,
-//         tag: topTracks.name,
-//         active: topTracks.name,
-//         owner: topTracks.name,
-//         followers: topTracks.name,
-//         comments: topTracks.name,
-//         stars: topTracks.name,
-//   };
-// });
-
 const items = times(10, id => {
   return {
     id,
@@ -72,8 +40,6 @@ const items = times(10, id => {
     stars: random.integer({ min: 0, max: 5 }),
   };
 });
-
-console.log(items);
 
 const loadTags = () => {
   return new Promise(resolve => {
@@ -90,14 +56,13 @@ const loadTags = () => {
 
 const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 
-export class HomeView extends Component {
+export class ControlledSearchBar extends Component {
   constructor(props) {
     super(props);
     this.state = {
       query: initialQuery,
-      result: items,
       error: null,
-      incremental: true,
+      incremental: false,
     };
   }
 
@@ -107,23 +72,44 @@ export class HomeView extends Component {
     } else {
       this.setState({
         error: null,
-        result: EuiSearchBar.Query.execute(query, items, {
-          defaultFields: ['owner', 'tag', 'type'],
-        }),
         query,
       });
-      console.log('----');
-      console.log(query);
-      // setTimeout(() => {
-        // console.log(topTracks(query));
-      // }, 1000);
-
     }
   };
 
   toggleIncremental = () => {
     this.setState(prevState => ({ incremental: !prevState.incremental }));
   };
+
+  setQuery = query => {
+    this.setState({ query });
+  };
+
+  renderBookmarks() {
+    return (
+      <Fragment>
+        <p>Enter a query, or select one from a bookmark</p>
+        <EuiSpacer size="s" />
+        <EuiFlexGroup>
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              size="s"
+              onClick={() => this.setQuery('status:open owner:dewey')}>
+              mine, open
+            </EuiButton>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              size="s"
+              onClick={() => this.setQuery('status:closed owner:dewey')}>
+              mine, closed
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer size="m" />
+      </Fragment>
+    );
+  }
 
   renderSearch() {
     const { incremental } = this.state;
@@ -154,13 +140,6 @@ export class HomeView extends Component {
         name: 'Mine',
         field: 'owner',
         value: 'dewey',
-      },
-      {
-        type: 'field_value_toggle',
-        name: 'Popular',
-        field: 'followers',
-        value: 5,
-        operator: 'gt',
       },
       {
         type: 'field_value_selection',
@@ -199,7 +178,7 @@ export class HomeView extends Component {
         tag: {
           type: 'string',
           validate: value => {
-            if (value !== '' && !tags.some(tag => tag.name === value)) {
+            if (!tags.some(tag => tag.name === value)) {
               throw new Error(
                 `unknown tag (possible values: ${tags
                   .map(tag => tag.name)
@@ -213,9 +192,9 @@ export class HomeView extends Component {
 
     return (
       <EuiSearchBar
-        defaultQuery={initialQuery}
+        query={this.state.query}
         box={{
-          placeholder: 'Artist, Song, or Album',
+          placeholder: 'e.g. type:visualization -is:active joe',
           incremental,
           schema,
         }}
@@ -289,58 +268,19 @@ export class HomeView extends Component {
   }
 
   render() {
-    const { incremental, query } = this.state;
-
-    let esQueryDsl;
-    let esQueryString;
-
-    try {
-      esQueryDsl = EuiSearchBar.Query.toESQuery(query);
-    } catch (e) {
-      esQueryDsl = e.toString();
-    }
-    try {
-      esQueryString = EuiSearchBar.Query.toESQueryString(query);
-    } catch (e) {
-      esQueryString = e.toString();
-    }
+    const { incremental } = this.state;
 
     const content = this.renderError() || (
       <EuiFlexGroup>
-        <EuiFlexItem grow={4}>
-          <EuiTitle size="s">
-            <h3>Elasticsearch Query String</h3>
-          </EuiTitle>
-          <EuiSpacer size="s" />
-          <EuiCodeBlock language="js">
-            {esQueryString ? esQueryString : ''}
-          </EuiCodeBlock>
-
-          <EuiSpacer size="l" />
-
-          <EuiTitle size="s">
-            <h3>Elasticsearch Query DSL</h3>
-          </EuiTitle>
-          <EuiSpacer size="s" />
-          <EuiCodeBlock language="js">
-            {esQueryDsl ? JSON.stringify(esQueryDsl, null, 2) : ''}
-          </EuiCodeBlock>
-        </EuiFlexItem>
-
-        <EuiFlexItem grow={6}>
-          <EuiTitle size="s">
-            <h3>JS execution</h3>
-          </EuiTitle>
-
-          <EuiSpacer size="s" />
-
-          {this.renderTable()}
-        </EuiFlexItem>
+        <EuiFlexItem grow={6}>{this.renderTable()}</EuiFlexItem>
       </EuiFlexGroup>
     );
 
     return (
       <Fragment>
+        <EuiFlexGroup>
+          <EuiFlexItem>{this.renderBookmarks()}</EuiFlexItem>
+        </EuiFlexGroup>
         <EuiFlexGroup alignItems="center">
           <EuiFlexItem>{this.renderSearch()}</EuiFlexItem>
 

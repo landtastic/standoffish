@@ -14,14 +14,14 @@ interface Props {
 export class Theme extends React.Component<Props> {
   // Set default properties
   static defaultProps = {
-    theme: 'light',
+    theme: 'dark',
   };
 
   // Items shown in property panel
   static propertyControls: PropertyControls = {
     theme: {
       type: ControlType.SegmentedEnum,
-      options: ['light', 'dark'],
+      options: ['dark', 'light'],
       title: 'Theme',
     },
   };
@@ -36,7 +36,7 @@ export class Theme extends React.Component<Props> {
           <style
             type="text/css"
             dangerouslySetInnerHTML={{
-              __html: this.props.theme === 'light' ? LightCSS : DarkCSS,
+              __html: this.props.theme === 'dark' ? DarkCSS : LightCSS,
             }}
           />
         </div>

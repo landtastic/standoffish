@@ -13,12 +13,12 @@ import { NotFoundView } from './views/not_found/not_found_view';
 import { registerTheme } from './services';
 
 import Routes from './routes';
-import themeLight from './theme_light.scss';
 import themeDark from './theme_dark.scss';
-
-registerTheme('light', [themeLight]);
+import themeLight from './theme_light.scss';
 
 registerTheme('dark', [themeDark]);
+
+registerTheme('light', [themeLight]);
 
 // Set up app
 
@@ -48,8 +48,8 @@ const routes = [
 const onRouteEnter = route => {
   const leafRoute = route.routes[route.routes.length - 1];
   document.title = leafRoute.name
-    ? `Elastic UI Framework - ${leafRoute.name}`
-    : 'Elastic UI Framework';
+    ? `Standoffish Music Player - ${leafRoute.name}`
+    : 'Standoffish Music Player';
 };
 
 const syncTitleWithRoutes = routesList => {

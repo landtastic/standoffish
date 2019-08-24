@@ -9,7 +9,6 @@ import {
   EuiFlexItem,
   EuiCodeBlock,
   EuiTitle,
-  EuiSwitch,
   EuiBasicTable,
   EuiSearchBar,
 } from '../../../../src/components';
@@ -22,42 +21,27 @@ const tags = [
   { name: 'eng', color: 'success' },
   { name: 'sales', color: 'warning' },
   { name: 'ga', color: 'success' },
+  { name: 'presales', color: 'success' },
+  { name: 'product', color: 'warning' },
+  { name: 'engineering', color: 'success' },
+  { name: 'design', color: 'warning' },
+  { name: 'earlybirds', color: 'success' },
+  { name: 'people-ops', color: 'danger' },
+  { name: 'solutions', color: 'success' },
+  { name: 'elasticsearch', color: 'success' },
+  { name: 'kibana', color: 'success' },
+  { name: 'cloud', color: 'danger' },
+  { name: 'logstash', color: 'warning' },
+  { name: 'beats', color: 'warning' },
+  { name: 'legal', color: 'danger' },
+  { name: 'revenue', color: 'success' },
+  { name: 'public-relations', color: 'success' },
+  { name: 'social-media-management', color: 'warning' },
 ];
 
 const types = ['dashboard', 'visualization', 'watch'];
 
 const users = ['dewey', 'wanda', 'carrie', 'jmack', 'gabic'];
-
-const topTracks = (artist) => fetch('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist='+ artist +'&autocorrect=1&api_key=946a0b231980d52f90b8a31e15bccb16&limit=40&format=json') //&callback=response
-      .then(function(response) {
-          if (response.status >= 400) {
-              throw new Error("Bad response from server");
-          }
-          return response.json();
-      })
-      .then(function(response) {
-          console.log(response.toptracks.track);
-          return response.toptracks.track;
-          // return {
-          //   id,
-          //   response,
-          // };
-      });
-
-// const items = times(10, id => {
-//   return {
-//      // topTracks.name
-//         id,
-//         status: topTracks.name,
-//         type: topTracks.name,
-//         tag: topTracks.name,
-//         active: topTracks.name,
-//         owner: topTracks.name,
-//         followers: topTracks.name,
-//         comments: topTracks.name,
-//         stars: topTracks.name,
-//   };
-// });
 
 const items = times(10, id => {
   return {
@@ -73,31 +57,15 @@ const items = times(10, id => {
   };
 });
 
-console.log(items);
-
-const loadTags = () => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(
-        tags.map(tag => ({
-          value: tag.name,
-          view: <EuiHealth color={tag.color}>{tag.name}</EuiHealth>,
-        }))
-      );
-    }, 2000);
-  });
-};
-
 const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 
-export class HomeView extends Component {
+export class SearchBarFilters extends Component {
   constructor(props) {
     super(props);
     this.state = {
       query: initialQuery,
       result: items,
       error: null,
-      incremental: true,
     };
   }
 
@@ -112,63 +80,42 @@ export class HomeView extends Component {
         }),
         query,
       });
-      console.log('----');
-      console.log(query);
-      // setTimeout(() => {
-        // console.log(topTracks(query));
-      // }, 1000);
-
     }
   };
 
-  toggleIncremental = () => {
-    this.setState(prevState => ({ incremental: !prevState.incremental }));
-  };
-
   renderSearch() {
-    const { incremental } = this.state;
-
     const filters = [
       {
-        type: 'field_value_toggle_group',
-        field: 'status',
-        items: [
-          {
-            value: 'open',
-            name: 'Open',
-          },
-          {
-            value: 'closed',
-            name: 'Closed',
-          },
-        ],
-      },
-      {
-        type: 'is',
-        field: 'active',
-        name: 'Active',
-        negatedName: 'Inactive',
-      },
-      {
-        type: 'field_value_toggle',
-        name: 'Mine',
-        field: 'owner',
-        value: 'dewey',
-      },
-      {
-        type: 'field_value_toggle',
-        name: 'Popular',
-        field: 'followers',
-        value: 5,
-        operator: 'gt',
+        type: 'field_value_selection',
+        field: 'tag',
+        name: 'Tag ("prefix" filter, default)',
+        multiSelect: 'or',
+        options: tags.map(tag => ({
+          value: tag.name,
+          view: <EuiHealth color={tag.color}>{tag.name}</EuiHealth>,
+        })),
       },
       {
         type: 'field_value_selection',
         field: 'tag',
-        name: 'Tag',
+        name: 'Tag ("includes" filter)',
+        filterWith: 'includes',
         multiSelect: 'or',
-        cache: 10000, // will cache the loaded tags for 10 sec
-        options: () => loadTags(),
+        options: tags.map(tag => ({
+          value: tag.name,
+          view: <EuiHealth color={tag.color}>{tag.name}</EuiHealth>,
+        })),
+      },
+      {
+        type: 'field_value_selection',
+        field: 'tag',
+        name: 'Tag (custom filter)',
+        filterWith: () => Math.random() > 0.5,
+        multiSelect: 'or',
+        options: tags.map(tag => ({
+          value: tag.name,
+          view: <EuiHealth color={tag.color}>{tag.name}</EuiHealth>,
+        })),
       },
     ];
 
@@ -199,7 +146,7 @@ export class HomeView extends Component {
         tag: {
           type: 'string',
           validate: value => {
-            if (value !== '' && !tags.some(tag => tag.name === value)) {
+            if (!tags.some(tag => tag.name === value)) {
               throw new Error(
                 `unknown tag (possible values: ${tags
                   .map(tag => tag.name)
@@ -215,8 +162,8 @@ export class HomeView extends Component {
       <EuiSearchBar
         defaultQuery={initialQuery}
         box={{
-          placeholder: 'Artist, Song, or Album',
-          incremental,
+          placeholder: 'e.g. type:visualization -is:active joe',
+          incremental: true,
           schema,
         }}
         filters={filters}
@@ -289,21 +236,10 @@ export class HomeView extends Component {
   }
 
   render() {
-    const { incremental, query } = this.state;
+    const { query } = this.state;
 
-    let esQueryDsl;
-    let esQueryString;
-
-    try {
-      esQueryDsl = EuiSearchBar.Query.toESQuery(query);
-    } catch (e) {
-      esQueryDsl = e.toString();
-    }
-    try {
-      esQueryString = EuiSearchBar.Query.toESQueryString(query);
-    } catch (e) {
-      esQueryString = e.toString();
-    }
+    const esQueryDsl = EuiSearchBar.Query.toESQuery(query);
+    const esQueryString = EuiSearchBar.Query.toESQueryString(query);
 
     const content = this.renderError() || (
       <EuiFlexGroup>
@@ -341,17 +277,7 @@ export class HomeView extends Component {
 
     return (
       <Fragment>
-        <EuiFlexGroup alignItems="center">
-          <EuiFlexItem>{this.renderSearch()}</EuiFlexItem>
-
-          <EuiFlexItem grow={false}>
-            <EuiSwitch
-              label="Incremental"
-              checked={incremental}
-              onChange={this.toggleIncremental}
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+        {this.renderSearch()}
         <EuiSpacer size="l" />
         {content}
       </Fragment>

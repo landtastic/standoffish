@@ -28,37 +28,6 @@ const types = ['dashboard', 'visualization', 'watch'];
 
 const users = ['dewey', 'wanda', 'carrie', 'jmack', 'gabic'];
 
-const topTracks = (artist) => fetch('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist='+ artist +'&autocorrect=1&api_key=946a0b231980d52f90b8a31e15bccb16&limit=40&format=json') //&callback=response
-      .then(function(response) {
-          if (response.status >= 400) {
-              throw new Error("Bad response from server");
-          }
-          return response.json();
-      })
-      .then(function(response) {
-          console.log(response.toptracks.track);
-          return response.toptracks.track;
-          // return {
-          //   id,
-          //   response,
-          // };
-      });
-
-// const items = times(10, id => {
-//   return {
-//      // topTracks.name
-//         id,
-//         status: topTracks.name,
-//         type: topTracks.name,
-//         tag: topTracks.name,
-//         active: topTracks.name,
-//         owner: topTracks.name,
-//         followers: topTracks.name,
-//         comments: topTracks.name,
-//         stars: topTracks.name,
-//   };
-// });
-
 const items = times(10, id => {
   return {
     id,
@@ -72,8 +41,6 @@ const items = times(10, id => {
     stars: random.integer({ min: 0, max: 5 }),
   };
 });
-
-console.log(items);
 
 const loadTags = () => {
   return new Promise(resolve => {
@@ -90,14 +57,14 @@ const loadTags = () => {
 
 const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 
-export class HomeView extends Component {
+export class SearchBar extends Component {
   constructor(props) {
     super(props);
     this.state = {
       query: initialQuery,
       result: items,
       error: null,
-      incremental: true,
+      incremental: false,
     };
   }
 
@@ -112,12 +79,6 @@ export class HomeView extends Component {
         }),
         query,
       });
-      console.log('----');
-      console.log(query);
-      // setTimeout(() => {
-        // console.log(topTracks(query));
-      // }, 1000);
-
     }
   };
 
@@ -215,7 +176,7 @@ export class HomeView extends Component {
       <EuiSearchBar
         defaultQuery={initialQuery}
         box={{
-          placeholder: 'Artist, Song, or Album',
+          placeholder: 'e.g. type:visualization -is:active joe',
           incremental,
           schema,
         }}
