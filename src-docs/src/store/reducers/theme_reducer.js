@@ -1,7 +1,7 @@
 import ActionTypes from '../../actions/action_types';
 
 const defaultState = {
-  theme: 'light',
+  theme: 'dark',
 };
 
 export default function sectionsReducer(state = defaultState, action) {

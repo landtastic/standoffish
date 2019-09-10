@@ -21,6 +21,7 @@ module.exports = {
   ],
   "plugins": [
     "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-syntax-optional-chaining",
     "pegjs-inline-precompile",
     "./scripts/babel/proptypes-from-ts-props",
     "add-module-exports",

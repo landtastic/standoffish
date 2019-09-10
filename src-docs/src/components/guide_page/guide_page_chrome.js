@@ -106,12 +106,12 @@ export class GuidePageChrome extends Component {
             wrap>
             <EuiFlexItem grow={false}>
               <Link to="/" className="guideLogo" aria-label="Go to home page">
-                <EuiIcon type="logoElastic" size="l" />
+
               </Link>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <Link to="/" aria-label="Go to home page" className="euiLink">
-                <strong>Elastic UI</strong>
+                <span style={{fontSize:'1.5em'}}>&#9835;</span> <strong>Standoffish</strong>
               </Link>
             </EuiFlexItem>
           </EuiFlexGroup>
@@ -203,7 +203,7 @@ export class GuidePageChrome extends Component {
     if (sideNav.length) {
       sideNavContent = (
         <EuiSideNav
-          mobileTitle="Navigate components"
+          mobileTitle="Menu"
           toggleOpenOnMobile={this.toggleOpenOnMobile}
           isOpenOnMobile={this.state.isSideNavOpenOnMobile}
           items={sideNav}
@@ -224,13 +224,13 @@ export class GuidePageChrome extends Component {
 
           <EuiSpacer size="m" />
 
-          <div className="guideSideNav__search">
+          {/*<div className="guideSideNav__search">
             <EuiFieldSearch
               placeholder="Search"
               value={this.state.search}
               onChange={this.onSearchChange}
             />
-          </div>
+          </div>*/}
         </div>
 
         <div className="guideSideNav__content">{sideNavContent}</div>

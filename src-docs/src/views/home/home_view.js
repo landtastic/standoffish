@@ -1,92 +1,44 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, useState } from 'react';
 import { times } from '../../../../src/services/utils';
-import { Random } from '../../../../src/services/random';
 import {
   EuiHealth,
   EuiCallOut,
   EuiSpacer,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiCodeBlock,
+  EuiFlexGrid,
+  EuiImage,
+  EuiCard,
   EuiTitle,
   EuiSwitch,
   EuiBasicTable,
   EuiSearchBar,
+  SearchResultsGrid,
 } from '../../../../src/components';
 
-const random = new Random();
+const scrobblerURL = 'http://ws.audioscrobbler.com/2.0/';
 
-const tags = [
-  { name: 'marketing', color: 'danger' },
-  { name: 'finance', color: 'success' },
-  { name: 'eng', color: 'success' },
-  { name: 'sales', color: 'warning' },
-  { name: 'ga', color: 'success' },
-];
+const LFapiKey = '946a0b231980d52f90b8a31e15bccb16';
 
-const types = ['dashboard', 'visualization', 'watch'];
+let artists = query => {
+  return fetch(`${scrobblerURL}?method=artist.search&api_key=${LFapiKey}&limit=6&format=json&artist=${query}`)
+  .then(response => response.json())
+}
 
-const users = ['dewey', 'wanda', 'carrie', 'jmack', 'gabic'];
+let songs = query => {
+  return fetch(`${scrobblerURL}?method=track.search&api_key=${LFapiKey}&limit=6&format=json&track=${query}`)
+  .then(response => response.json())
+}
 
-const topTracks = (artist) => fetch('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist='+ artist +'&autocorrect=1&api_key=946a0b231980d52f90b8a31e15bccb16&limit=40&format=json') //&callback=response
-      .then(function(response) {
-          if (response.status >= 400) {
-              throw new Error("Bad response from server");
-          }
-          return response.json();
-      })
-      .then(function(response) {
-          console.log(response.toptracks.track);
-          return response.toptracks.track;
-          // return {
-          //   id,
-          //   response,
-          // };
-      });
+let albums = query => {
+  return fetch(`${scrobblerURL}?method=album.search&api_key=${LFapiKey}&limit=6&format=json&album=${query}`)
+  .then(response => response.json())
+}
 
-// const items = times(10, id => {
-//   return {
-//      // topTracks.name
-//         id,
-//         status: topTracks.name,
-//         type: topTracks.name,
-//         tag: topTracks.name,
-//         active: topTracks.name,
-//         owner: topTracks.name,
-//         followers: topTracks.name,
-//         comments: topTracks.name,
-//         stars: topTracks.name,
-//   };
-// });
-
-const items = times(10, id => {
-  return {
-    id,
-    status: random.oneOf(['open', 'closed']),
-    type: random.oneOf(types),
-    tag: random.setOf(tags.map(tag => tag.name), { min: 0, max: 3 }),
-    active: random.boolean(),
-    owner: random.oneOf(users),
-    followers: random.integer({ min: 0, max: 20 }),
-    comments: random.integer({ min: 0, max: 10 }),
-    stars: random.integer({ min: 0, max: 5 }),
-  };
-});
-
-console.log(items);
-
-const loadTags = () => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(
-        tags.map(tag => ({
-          value: tag.name,
-          view: <EuiHealth color={tag.color}>{tag.name}</EuiHealth>,
-        }))
-      );
-    }, 2000);
-  });
-};
+// let toptracks = artist => {
+//   return fetch(`${scrobblerURL}?method=artist.gettoptracks&autocorrect=1&api_key=${LFapiKey}&limit=40&format=json&artist=${artist}`) //&callback=response
+//   .then(response => response.json())
+// }
 
 const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 
@@ -94,132 +46,64 @@ export class HomeView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      query: initialQuery,
-      result: items,
+      query: {},
+      results: {
+          artists: [],
+          songs: [],
+          albums: [],
+      },
       error: null,
       incremental: true,
     };
   }
 
   onChange = ({ query, error }) => {
-    if (error) {
-      this.setState({ error });
-    } else {
-      this.setState({
-        error: null,
-        result: EuiSearchBar.Query.execute(query, items, {
-          defaultFields: ['owner', 'tag', 'type'],
-        }),
-        query,
-      });
-      console.log('----');
-      console.log(query);
-      // setTimeout(() => {
-        // console.log(topTracks(query));
-      // }, 1000);
+    if (query.text == '') {
+        this.setState({
+            results: {
+                artists: [],
+                songs: [],
+                albums: [],
+            }
+        });
+        return;
+    }
 
+    if (error) {
+        this.setState({ error });
+    } else {
+        console.log(this.state);
+        let q = query.text
+        let combinedData = {"artists":{},"songs":{},"albums":{}};
+        Promise.all([artists(q),songs(q),albums(q)]).then(values => {
+            combinedData["artists"] = values[0].results.artistmatches.artist;
+            combinedData["songs"] = values[1].results.trackmatches.track;
+            combinedData["albums"] = values[2].results.albummatches.album;
+            // combinedData["toptracks"] = values[3].toptracks.track.map(track => track.name);
+            this.setState({
+              error: null,
+              query,
+              results: combinedData,
+            });
+        });
     }
   };
 
-  toggleIncremental = () => {
-    this.setState(prevState => ({ incremental: !prevState.incremental }));
-  };
+  // toggleIncremental = () => {
+  //   this.setState(prevState => ({ incremental: !prevState.incremental }));
+  // };
 
-  renderSearch() {
+  renderSearchBar() {
     const { incremental } = this.state;
-
-    const filters = [
-      {
-        type: 'field_value_toggle_group',
-        field: 'status',
-        items: [
-          {
-            value: 'open',
-            name: 'Open',
-          },
-          {
-            value: 'closed',
-            name: 'Closed',
-          },
-        ],
-      },
-      {
-        type: 'is',
-        field: 'active',
-        name: 'Active',
-        negatedName: 'Inactive',
-      },
-      {
-        type: 'field_value_toggle',
-        name: 'Mine',
-        field: 'owner',
-        value: 'dewey',
-      },
-      {
-        type: 'field_value_toggle',
-        name: 'Popular',
-        field: 'followers',
-        value: 5,
-        operator: 'gt',
-      },
-      {
-        type: 'field_value_selection',
-        field: 'tag',
-        name: 'Tag',
-        multiSelect: 'or',
-        cache: 10000, // will cache the loaded tags for 10 sec
-        options: () => loadTags(),
-      },
-    ];
-
-    const schema = {
-      strict: true,
-      fields: {
-        active: {
-          type: 'boolean',
-        },
-        status: {
-          type: 'string',
-        },
-        followers: {
-          type: 'number',
-        },
-        comments: {
-          type: 'number',
-        },
-        stars: {
-          type: 'number',
-        },
-        created: {
-          type: 'date',
-        },
-        owner: {
-          type: 'string',
-        },
-        tag: {
-          type: 'string',
-          validate: value => {
-            if (value !== '' && !tags.some(tag => tag.name === value)) {
-              throw new Error(
-                `unknown tag (possible values: ${tags
-                  .map(tag => tag.name)
-                  .join(',')})`
-              );
-            }
-          },
-        },
-      },
-    };
-
     return (
       <EuiSearchBar
         defaultQuery={initialQuery}
         box={{
-          placeholder: 'Artist, Song, or Album',
+          placeholder: 'Artist, song, or album',
           incremental,
-          schema,
+          // schema,
         }}
-        filters={filters}
+        // filters={filters}
         onChange={this.onChange}
       />
     );
@@ -242,119 +126,101 @@ export class HomeView extends Component {
     );
   }
 
-  renderTable() {
-    const columns = [
-      {
-        name: 'Type',
-        field: 'type',
-      },
-      {
-        name: 'Open',
-        field: 'status',
-        render: status => (status === 'open' ? 'Yes' : 'No'),
-      },
-      {
-        name: 'Active',
-        field: 'active',
-        dataType: 'boolean',
-      },
-      {
-        name: 'Tags',
-        field: 'tag',
-      },
-      {
-        name: 'Owner',
-        field: 'owner',
-      },
-      {
-        name: 'Stats',
-        width: '150px',
-        render: item => {
-          return (
-            <div>
-              <div>{`${item.stars} Stars`}</div>
-              <div>{`${item.followers} Followers`}</div>
-              <div>{`${item.comments} Comments`}</div>
-            </div>
-          );
-        },
-      },
-    ];
-
-    const queriedItems = EuiSearchBar.Query.execute(this.state.query, items, {
-      defaultFields: ['owner', 'tag', 'type'],
-    });
-
-    return <EuiBasicTable items={queriedItems} columns={columns} />;
-  }
-
   render() {
     const { incremental, query } = this.state;
 
-    let esQueryDsl;
-    let esQueryString;
+    // let esQueryDsl;
+    // let esQueryString;
+    //
+    // try {
+    //   esQueryDsl = EuiSearchBar.Query.toESQuery(query);
+    // } catch (e) {
+    //   esQueryDsl = e.toString();
+    // }
+    // try {
+    //   esQueryString = EuiSearchBar.Query.toESQueryString(query);
+    // } catch (e) {
+    //   esQueryString = e.toString();
+    // }
 
-    try {
-      esQueryDsl = EuiSearchBar.Query.toESQuery(query);
-    } catch (e) {
-      esQueryDsl = e.toString();
-    }
-    try {
-      esQueryString = EuiSearchBar.Query.toESQueryString(query);
-    } catch (e) {
-      esQueryString = e.toString();
-    }
-
-    const content = this.renderError() || (
-      <EuiFlexGroup>
-        <EuiFlexItem grow={4}>
-          <EuiTitle size="s">
-            <h3>Elasticsearch Query String</h3>
-          </EuiTitle>
-          <EuiSpacer size="s" />
-          <EuiCodeBlock language="js">
-            {esQueryString ? esQueryString : ''}
-          </EuiCodeBlock>
-
-          <EuiSpacer size="l" />
-
-          <EuiTitle size="s">
-            <h3>Elasticsearch Query DSL</h3>
-          </EuiTitle>
-          <EuiSpacer size="s" />
-          <EuiCodeBlock language="js">
-            {esQueryDsl ? JSON.stringify(esQueryDsl, null, 2) : ''}
-          </EuiCodeBlock>
-        </EuiFlexItem>
-
-        <EuiFlexItem grow={6}>
-          <EuiTitle size="s">
-            <h3>JS execution</h3>
-          </EuiTitle>
-
-          <EuiSpacer size="s" />
-
-          {this.renderTable()}
-        </EuiFlexItem>
-      </EuiFlexGroup>
+    // const content = this.renderError() ||
+    //TODO make ResultsGrid component work
+    const content = (query.text == '') || (
+        <Fragment>
+            <EuiFlexGroup gutterSize="none">
+               <EuiFlexItem grow={false}>
+                 <div>Artists</div>
+                 <EuiSpacer />
+                 <EuiFlexGrid columns={4} gutterSize="m">
+                    {this.state.results.artists.map((item,key) => (
+                       <EuiFlexItem key={key}>
+                           <EuiImage
+                               size="m"
+                               hasShadow
+                               caption={item.name}
+                               alt={item.name}
+                               url={item.image[2]["#text"]}
+                             />
+                       </EuiFlexItem>
+                   ))}
+                 </EuiFlexGrid>
+               </EuiFlexItem>
+               <EuiFlexItem grow={false}>
+                 <div>Songs</div>
+                 <EuiSpacer />
+                 <EuiFlexGrid columns={4} gutterSize="m">
+                     {this.state.results.songs.map((item,key) => (
+                        <EuiFlexItem key={key}>
+                            <EuiImage
+                                size="m"
+                                hasShadow
+                                caption={item.name}
+                                alt={item.name}
+                                url={item.image[2]["#text"]}
+                              />
+                        </EuiFlexItem>
+                    ))}
+                 </EuiFlexGrid>
+               </EuiFlexItem>
+            </EuiFlexGroup>
+            <EuiFlexGroup gutterSize="none">
+               <EuiFlexItem grow={false}>
+                 <div>Albums</div>
+                 <EuiSpacer />
+                 <EuiFlexGrid columns={4} gutterSize="s">
+                     {this.state.results.albums.map((item,key) => (
+                         <EuiFlexItem key={key}>
+                             <EuiImage
+                                 size="m"
+                                 hasShadow
+                                 caption={item.name}
+                                 alt={item.name}
+                                 url={item.image[2]["#text"]}
+                               />
+                         </EuiFlexItem>
+                    ))}
+                 </EuiFlexGrid>
+               </EuiFlexItem>
+            </EuiFlexGroup>
+        </Fragment>
     );
+
 
     return (
       <Fragment>
+        <EuiSpacer size="s" />
         <EuiFlexGroup alignItems="center">
-          <EuiFlexItem>{this.renderSearch()}</EuiFlexItem>
-
-          <EuiFlexItem grow={false}>
-            <EuiSwitch
-              label="Incremental"
-              checked={incremental}
-              onChange={this.toggleIncremental}
-            />
-          </EuiFlexItem>
+          <EuiFlexItem>{this.renderSearchBar()}</EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer size="l" />
-        {content}
+        <EuiFlexGroup alignItems="center">
+          <EuiFlexItem>{content}</EuiFlexItem>
+        </EuiFlexGroup>
       </Fragment>
+
     );
   }
 }
+// <SearchResultsGrid
+//   results={this.state.results}
+// />
