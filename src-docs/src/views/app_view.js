@@ -60,7 +60,7 @@ export class AppView extends Component {
     };
 
     return (
-      <EuiPage restrictWidth={1240} className="guidePage">
+      <EuiPage className="guidePage">
         <EuiPageBody>
           <EuiErrorBoundary>
             <GuidePageChrome

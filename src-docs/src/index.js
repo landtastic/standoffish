@@ -9,6 +9,7 @@ import configureStore from './store/configure_store';
 import { AppContainer } from './views/app_container';
 import { HomeView } from './views/home/home_view';
 import { NotFoundView } from './views/not_found/not_found_view';
+import { ArtistDetailView } from './views/artist/artist_detail';
 
 import { registerTheme } from './services';
 
@@ -27,10 +28,15 @@ const routerHistory = syncHistoryWithStore(Routes.history, store);
 
 const childRoutes = [].concat(Routes.getAppRoutes());
 childRoutes.push({
+  path: '/artist/:artistName',
+  component: ArtistDetailView,
+  name: 'artist',
+},
+{
   path: '*',
   component: NotFoundView,
   name: 'Page Not Found',
-});
+},);
 
 const routes = [
   {

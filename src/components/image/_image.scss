@@ -29,6 +29,10 @@
   }
 
   // These sizes are mostly suggestions. Don't look too hard for meaning in their values.
+  &.euiImage--xsmall {
+    width: convertToRem(100px);
+  }
+
   &.euiImage--small {
     width: convertToRem(120px);
   }
@@ -56,7 +60,7 @@
 }
 
 .euiImage__caption {
-  @include euiFontSizeS;
+  @include euiFontSizeXS;
   text-align: center;
 }
 

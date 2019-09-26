@@ -80,6 +80,8 @@
   h6 {
     font-size: convertToRem($baseFontSize * nth($euiTextScale, 7));
     line-height: convertToRem($baseLineHeightMultiplier * 2);
+    color: $euiColorMediumShade;
+    font-weight: $euiFontWeightRegular;
   }
 
   small {

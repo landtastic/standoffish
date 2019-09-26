@@ -34,7 +34,7 @@ $guideZLevelHighest: $euiZLevel9 + 1000;
     padding: $euiSize;
     position: absolute;
     bottom: 0;
-    top: 132px;
+    top: 72px;
     overflow-y: auto;
   }
 }
@@ -45,7 +45,6 @@ $guideZLevelHighest: $euiZLevel9 + 1000;
   min-height: 100vh;
   background-color: $euiColorEmptyShade;
   border-left: $euiBorderThin;
-  max-width: 1000px;
   margin-left: 240px;
 }
 
