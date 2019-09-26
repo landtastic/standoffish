@@ -113,7 +113,7 @@ export class EuiImage extends Component {
                   this.figure = node;
                 }}
                 className="euiImageFullScreen">
-                <img src={url} className="euiImageFullScreen__img" alt={alt}/>
+                <img src={url} className="euiImageFullScreen__img" alt={alt} />
                 {optionalCaption}
               </figure>
             </button>
@@ -122,14 +122,23 @@ export class EuiImage extends Component {
       );
     }
 
-    const fallbackImg = "https://ae01.alicdn.com/kf/HTB1sRh2xXmWBuNjSspdq6zugXXan.jpg_q50.jpg";
+    const fallbackImg =
+      'https://ae01.alicdn.com/kf/HTB1sRh2xXmWBuNjSspdq6zugXXan.jpg_q50.jpg';
 
     return (
       <button
         type="button"
         onClick={allowFullScreen ? this.openFullScreen : undefined}>
         <figure className={classes} {...rest}>
-          <img src={url} className="euiImage__img" alt={alt} onError={(e)=>{e.target.onerror = null; e.target.src=fallbackImg}}/>
+          <img
+            src={url}
+            className="euiImage__img"
+            alt={alt}
+            onError={e => {
+              e.target.onerror = null;
+              e.target.src = fallbackImg;
+            }}
+          />
           {optionalCaption}
 
           {/*

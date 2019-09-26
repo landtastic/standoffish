@@ -26,3 +26,17 @@ export function memoize<T extends (...args: any[]) => any>(
 export const browserTick = (callback: FrameRequestCallback) => {
   requestAnimationFrame(callback);
 };
+
+/**
+ * Lowercases input and replaces spaces with hyphens:
+ * e.g. 'GridView Example' -> 'gridview-example'
+ */
+export function slugify<T>(str: string) {
+  const parts = str
+    .toLowerCase()
+    .replace(/[-]+/g, ' ')
+    .replace(/[^\w^\s]+/g, '')
+    .replace(/ +/g, ' ')
+    .split(' ');
+  return parts.join('-');
+};

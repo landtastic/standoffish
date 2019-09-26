@@ -27,16 +27,18 @@ const store = configureStore();
 const routerHistory = syncHistoryWithStore(Routes.history, store);
 
 const childRoutes = [].concat(Routes.getAppRoutes());
-childRoutes.push({
-  path: '/artist/:artistName',
-  component: ArtistDetailView,
-  name: 'artist',
-},
-{
-  path: '*',
-  component: NotFoundView,
-  name: 'Page Not Found',
-},);
+childRoutes.push(
+  {
+    path: '/artist/:artistName',
+    component: ArtistDetailView,
+    name: 'artist',
+  },
+  {
+    path: '*',
+    component: NotFoundView,
+    name: 'Page Not Found',
+  }
+);
 
 const routes = [
   {

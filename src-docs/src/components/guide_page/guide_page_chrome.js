@@ -5,16 +5,12 @@ import $ from 'jquery';
 import { Link } from 'react-router';
 
 import {
-  EuiFieldSearch,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiIcon,
   EuiSideNav,
-  EuiSpacer,
   EuiText,
   EuiButtonIcon,
   EuiPopover,
-  EuiPopoverTitle,
 } from '../../../../src/components';
 
 import { GuideLocaleSelector } from '../guide_locale_selector';
@@ -106,7 +102,7 @@ export class GuidePageChrome extends Component {
             wrap>
             <EuiFlexItem grow={false}>
               <Link to="/" className="guideLogo" aria-label="Go to home page">
-                <span style={{fontSize:'1.5em'}}>&#9835;</span>
+                <span style={{ fontSize: '1.5em' }}>&#9835;</span>
               </Link>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>

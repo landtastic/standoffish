@@ -13,54 +13,7 @@ import { Changelog } from './views/package/changelog';
 
 import { I18nTokens } from './views/package/i18n_tokens';
 
-
-/**
- * Lowercases input and replaces spaces with hyphens:
- * e.g. 'GridView Example' -> 'gridview-example'
- */
-export const slugify = str => {
-  const parts = str
-    .toLowerCase()
-    .replace(/[-]+/g, ' ')
-    .replace(/[^\w^\s]+/g, '')
-    .replace(/ +/g, ' ')
-    .split(' ');
-  return parts.join('-');
-};
-
-const createExample = example => {
-  if (!example) {
-    throw new Error(
-      'One of your example pages is undefined. This usually happens when you export or import it with the wrong name.'
-    );
-  }
-
-  const { title, intro, sections, beta } = example;
-  sections.forEach(section => {
-    section.id = slugify(section.title || title);
-  });
-
-  const renderedSections = sections.map(section =>
-    createElement(GuideSection, {
-      key: section.title || title,
-      ...section,
-    })
-  );
-
-  const component = () => (
-    <EuiErrorBoundary>
-      <GuidePage title={title} intro={intro} isBeta={beta}>
-        {renderedSections}
-      </GuidePage>
-    </EuiErrorBoundary>
-  );
-
-  return {
-    name: title,
-    component,
-    sections,
-  };
-};
+import { slugify } from '../../src/services/utils';
 
 const navigation = [
   {
