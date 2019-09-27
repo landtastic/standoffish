@@ -9,7 +9,7 @@ import {
   EuiListGroup,
 } from '../../../../src/components';
 
-const scrobblerURL = 'http://ws.audioscrobbler.com/2.0/';
+const scrobblerURL = 'https://ws.audioscrobbler.com/2.0/';
 
 const LFapiKey = '946a0b231980d52f90b8a31e15bccb16';
 // const discogsKey = 'key=eJhCgHcNJQgAdvtQiGfi&secret=AailmhUCMBAkvuggupoBQkncHPNuUbSw';
