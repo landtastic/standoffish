@@ -10,23 +10,11 @@ import {
   EuiPage,
   EuiPageBody,
   EuiContext,
-  EuiBottomBar,
-  EuiButton,
-  EuiButtonEmpty,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '../../../src/components';
 
 import { keyCodes } from '../../../src/services';
 
 export class AppView extends Component {
-  constructor(props) {
-     super(props);
-
-     this.state = {
-       showBar: true,
-     };
-   }
 
   updateTheme = () => {
     applyTheme(this.props.theme);
@@ -72,43 +60,7 @@ export class AppView extends Component {
       formatNumber: value => new Intl.NumberFormat(locale).format(value),
     };
 
-    let bottomBar;
-        if (this.state.showBar) {
-          bottomBar = (
-            <EuiBottomBar>
-              <EuiFlexGroup justifyContent="spaceBetween">
-                <EuiFlexItem grow={false}>
-                  <EuiFlexGroup gutterSize="s">
-                    <EuiFlexItem grow={false}>
-                      <EuiButton color="ghost" size="s" iconType="help">
-                        Help
-                      </EuiButton>
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiButton color="ghost" size="s" iconType="user">
-                        Add user
-                      </EuiButton>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <EuiFlexGroup gutterSize="s">
-                    <EuiFlexItem grow={false}>
-                      <EuiButtonEmpty color="ghost" size="s" iconType="cross">
-                        Discard
-                      </EuiButtonEmpty>
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiButton color="primary" fill size="s" iconType="check">
-                        Save
-                      </EuiButton>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiBottomBar>
-          );
-        }
+
 
     return (
       <EuiPage className="guidePage">
@@ -128,9 +80,6 @@ export class AppView extends Component {
             <EuiContext i18n={i18n}>
               {React.cloneElement(children, { selectedTheme: theme })}
             </EuiContext>
-          </div>
-          <div>
-            {bottomBar}
           </div>
         </EuiPageBody>
       </EuiPage>

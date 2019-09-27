@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router';
 import { slugify } from '../../../../src/services/utils';
+import PlayerView from '../../views/player/player_view'
 import {
   EuiSpacer,
   EuiFlexGroup,
@@ -36,6 +37,11 @@ const albums = query => {
   .then(response => response.json())
 }
 
+const youtubeJSON = query => {
+  return fetch(`https://www.googleapis.com/youtube/v3/search?&q=${query}&maxResults=10&part=snippet&key=AIzaSyDlcHPnr5gJr1_pBSvVSRtFudfpIUppfjM`)
+  .then(response => response.json())
+}
+
 const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 // const schema = {
 //   strict: false,
@@ -58,6 +64,7 @@ export class HomeView extends Component {
           albums: [],
       },
       songList: [],
+      playerOpen: false,
       error: null,
     };
   }
@@ -69,39 +76,48 @@ export class HomeView extends Component {
       return;
     }
 
-    // if (error) {
-    //     this.setState({ error });
-    //     console.log(this.state.error);
-    // } else {
-
-        let combinedData = { artists:{}, songs:{}, albums:{} };
-        Promise.all([ artists(query.text), songs(query.text), albums(query.text) ]).then(values => {
-            combinedData.artists = values[0].results;
-            combinedData.songs = values[1].results.trackmatches.track;
-            combinedData.albums = values[2].results.albummatches.album;
-            // combinedData["toptracks"] = values[3].toptracks.track.map(track => track.name);
-            this.setState({
-              results: combinedData,
-              query,
-            });
-
-            let songList = this.state.results.songs.map((item,key) => {
-              return {
-                label: `${item.artist} - ${item.name}`,
-                onClick: () => console.log(this.props),
-                //href: `https://www.youtube.com/results?search_query=${item.artist} ${item.name}`,
-                iconType: 'play',
-                size: 's',
-              };
-            });
-            this.setState({
-              songList: songList,
-            });
+    let combinedData = { artists:{}, songs:{}, albums:{} };
+    Promise.all([ artists(queryText), songs(queryText), albums(queryText) ]).then(values => {
+        combinedData.artists = values[0].results;
+        combinedData.songs = values[1].results.trackmatches.track;
+        combinedData.albums = values[2].results.albummatches.album;
+        // combinedData["toptracks"] = values[3].toptracks.track.map(track => track.name);
+        this.setState({
+          results: combinedData,
+          query,
         });
-    // }
-    console.log(this.state);
-    console.log(this.props);
+
+        let songList = this.state.results.songs.map((item,key) => {
+          return {
+            label: `${item.artist} - ${item.name}`,
+            onClick: () => this.openPlayer(`${item.artist} ${item.name}`),
+            //href: `https://www.youtube.com/results?search_query=${item.artist} ${item.name}`,
+            iconType: 'play',
+            size: 's',
+          };
+        });
+        this.setState({
+          songList: songList,
+        });
+    });
   };
+
+  setYoutubeId = query => {
+    youtubeJSON(query).then((result) => {
+      console.log(result.items[0].id.videoId);
+      this.setState({
+        selectedYoutubeId: result.items[0].id.videoId,
+      });
+    });
+  }
+
+  openPlayer(selectedSong) {
+    console.log(selectedSong);
+    this.setYoutubeId(selectedSong);
+    this.setState({
+      playerOpen: true,
+    });
+  }
 
   emptyResults() {
     this.setState({
@@ -228,12 +244,12 @@ export class HomeView extends Component {
         <EuiFlexGroup alignItems="center">
           <EuiFlexItem>{content}</EuiFlexItem>
         </EuiFlexGroup>
+        <PlayerView
+          playerOpen={this.state.playerOpen}
+          selectedYoutubeId={this.state.selectedYoutubeId}
+        />
       </Fragment>
 
     );
   }
 }
-
-// <SearchResultsGrid
-//   results={this.state.results}
-// />

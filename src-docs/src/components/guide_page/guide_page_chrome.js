@@ -19,6 +19,7 @@ import { GuideThemeSelector } from '../guide_theme_selector';
 export class GuidePageChrome extends Component {
   constructor(props) {
     super(props);
+     // this.toggleBar = this.toggleBar.bind(this);
 
     this.state = {
       search: '',
