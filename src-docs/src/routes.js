@@ -20,11 +20,11 @@ const navigation = [
     name: 'Playlists',
     items: [
       {
-        name: 'Cool stuff',
+        name: 'not yet',
         component: ArtistDetailView,
       },
       {
-        name: 'Fun stuff',
+        name: 'implemented',
         component: ArtistDetailView,
       },
     ],
