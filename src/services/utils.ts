@@ -38,5 +38,6 @@ export function slugify<T>(str: string) {
     .replace(/[^\w^\s]+/g, '')
     .replace(/ +/g, ' ')
     .split(' ');
+
   return parts.join('-');
 };

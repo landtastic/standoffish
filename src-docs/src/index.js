@@ -56,7 +56,7 @@ const routes = [
 const onRouteEnter = route => {
   const leafRoute = route.routes[route.routes.length - 1];
   document.title = leafRoute.name
-    ? `Standoffish Music Player - ${leafRoute.name}`
+    ? `Standoffish - ${leafRoute.name}`
     : 'Standoffish Music Player';
 };
 

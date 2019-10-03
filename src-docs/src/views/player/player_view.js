@@ -5,44 +5,73 @@ import {
   EuiBottomBar,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiButton,
-  EuiButtonEmpty,
   EuiIcon,
   EuiLink,
   EuiText,
 } from '../../../../src/components';
 
-export default class extends Component {
+const youtubeJSON = query => {
+  return fetch(`https://www.googleapis.com/youtube/v3/search?&q=${query}&maxResults=10&part=snippet&key=AIzaSyDlcHPnr5gJr1_pBSvVSRtFudfpIUppfjM`)
+  .then(response => response.json())
+}
+
+export class PlayerView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedYoutubeId: null,
+    };
+
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.playerQuery !== this.props.playerQuery) {
+      this.playSong(this.props.playerQuery);
+    }
+  }
+
+  setYoutubeId = query => {
+    youtubeJSON(query).then((result) => {
+      this.setState({
+        selectedYoutubeId: result.items[0].id.videoId,
+      });
+    });
+  }
+
+  playSong = selectedSong => {
+    this.setYoutubeId(selectedSong);
+  }
 
   render() {
+
     let bottomBar;
-    if (this.props.playerOpen) {
+    if (this.props.isPlayerOpen) {
       bottomBar = (
-        <EuiBottomBar>
+        <EuiBottomBar paddingSize="s">
           <EuiFlexGroup justifyContent="spaceAround" responsive={false} alignItems="center">
             <EuiFlexItem grow={1}>
               &nbsp;
             </EuiFlexItem>
-            <EuiFlexItem grow={7}>
-              <EuiFlexGroup gutterSize="s" responsive={false}>
+            <EuiFlexItem grow={4}>
+              <EuiFlexGroup gutterSize="none" responsive={false}>
                 <EuiFlexItem>
-                  <EuiLink onClick={ console.log('prev') }>
+                  <EuiLink onClick={ () => console.log('prev') }>
                     <EuiText textAlign="center">
-                      <EuiIcon size="xxl" type="arrowLeft" />
+                      <EuiIcon size="xl" type="arrowLeft" />
                     </EuiText>
                   </EuiLink>
                 </EuiFlexItem>
                 <EuiFlexItem>
                   <EuiText textAlign="center">
-                    <EuiLink onClick={ console.log('play') }>
+                    <EuiLink onClick={ () => console.log('play') }>
                       <EuiIcon size="xxl" type="play" />
                     </EuiLink>
                   </EuiText>
                 </EuiFlexItem>
                 <EuiFlexItem>
                   <EuiText textAlign="center">
-                    <EuiLink onClick={ console.log('next') }>
-                      <EuiIcon size="xxl" type="arrowRight" />
+                    <EuiLink onClick={ () => console.log('next') }>
+                      <EuiIcon size="xl" type="arrowRight" />
                     </EuiLink>
                   </EuiText>
                 </EuiFlexItem>
@@ -50,12 +79,11 @@ export default class extends Component {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <ReactPlayer
-                url={`http://www.youtube.com/embed/${this.props.selectedYoutubeId}`}
+                url={`http://www.youtube.com/embed/${this.state.selectedYoutubeId}`}
                 height={113}
                 width={200}
                 controls
                 playing
-                playsinline
                 config={{
                   youtube: {
                     playerVars: {
@@ -84,3 +112,16 @@ export default class extends Component {
     );
   }
 }
+
+// PlayerView.propTypes = {
+//   selectedYoutubeId: PropTypes.string.isRequired,
+//   theme: PropTypes.string.isRequired,
+//   toggleTheme: PropTypes.func.isRequired,
+//   locale: PropTypes.string.isRequired,
+//   toggleLocale: PropTypes.func.isRequired,
+//   routes: PropTypes.object.isRequired,
+// };
+//
+// PlayerView.defaultProps = {
+//   currentRoute: {},
+// };

@@ -95,13 +95,6 @@ export class EuiSideNav extends Component {
           onClick={toggleOpenOnMobile}>
           <span className="euiSideNav__mobileWrap">
             <span className="euiSideNav__mobileTitle">{mobileTitle}</span>
-
-            <EuiIcon
-              className="euiSideNav__mobileIcon"
-              type="apps"
-              size="m"
-              aria-hidden="true"
-            />
           </span>
         </button>
 

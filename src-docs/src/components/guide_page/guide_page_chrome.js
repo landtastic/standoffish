@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
-
 import { Link } from 'react-router';
-
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -19,7 +17,6 @@ import { GuideThemeSelector } from '../guide_theme_selector';
 export class GuidePageChrome extends Component {
   constructor(props) {
     super(props);
-     // this.toggleBar = this.toggleBar.bind(this);
 
     this.state = {
       search: '',
@@ -229,7 +226,6 @@ export class GuidePageChrome extends Component {
             />
           </div>*/}
         </div>
-
         <div className="guideSideNav__content">{sideNavContent}</div>
       </div>
     );

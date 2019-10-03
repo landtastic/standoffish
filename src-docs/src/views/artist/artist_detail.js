@@ -52,10 +52,22 @@ export class ArtistDetailView extends Component {
   }
 
   componentDidMount() {
-    const artistName = this.props.location.pathname
+    let artistName = this.props.location.pathname
       .split('/')
       .pop()
       .replace(/-/g, ' ');
+
+    // hacky fix for routes like robert-smith-2
+    let isLastPartNum = /^\d+$/.test(artistName[artistName.length-1]);
+    if (isLastPartNum) {
+      let newArtistName = artistName.split(' ');
+      newArtistName.pop();
+      console.log(newArtistName);
+      artistName = newArtistName.join(' ');
+    }
+
+    const openPlayer = this.props.openPlayer;
+
     const combinedData = { albums: {}, toptracks: {} };
     Promise.all([albums(artistName), toptracks(artistName)]).then(values => {
       combinedData.albums = values[0].topalbums.album;
@@ -71,9 +83,8 @@ export class ArtistDetailView extends Component {
       ) {
         return {
           label: item.name,
-          href: `https://www.youtube.com/results?search_query=${
-            item.artist.name
-          } ${item.name}`,
+          onClick: () => openPlayer(`${item.artist.name} ${item.name}`),
+          //href: `https://www.youtube.com/results?search_query=${item.artist.name} ${item.name}`,
           iconType: 'play',
           size: 's',
         };

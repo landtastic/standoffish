@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router';
 import { slugify } from '../../../../src/services/utils';
-import PlayerView from '../../views/player/player_view'
 import {
   EuiSpacer,
   EuiFlexGroup,
@@ -14,7 +13,7 @@ import {
   EuiSearchBar,
 } from '../../../../src/components';
 
-const scrobblerURL = 'https://ws.audioscrobbler.com/2.0/';
+const scrobblerURL = 'http://ws.audioscrobbler.com/2.0/';
 const LFapiKey = '946a0b231980d52f90b8a31e15bccb16';
 const discogsKey = 'key=eJhCgHcNJQgAdvtQiGfi&secret=AailmhUCMBAkvuggupoBQkncHPNuUbSw';
 
@@ -34,11 +33,6 @@ const songs = query => {
 
 const albums = query => {
   return fetch(`${scrobblerURL}?method=album.search&api_key=${LFapiKey}&limit=9&format=json&album=${query}`)
-  .then(response => response.json())
-}
-
-const youtubeJSON = query => {
-  return fetch(`https://www.googleapis.com/youtube/v3/search?&q=${query}&maxResults=10&part=snippet&key=AIzaSyDlcHPnr5gJr1_pBSvVSRtFudfpIUppfjM`)
   .then(response => response.json())
 }
 
@@ -64,7 +58,6 @@ export class HomeView extends Component {
           albums: [],
       },
       songList: [],
-      playerOpen: false,
       error: null,
     };
   }
@@ -90,7 +83,8 @@ export class HomeView extends Component {
         let songList = this.state.results.songs.map((item,key) => {
           return {
             label: `${item.artist} - ${item.name}`,
-            onClick: () => this.openPlayer(`${item.artist} ${item.name}`),
+            //onClick: () => player.playSong(`${item.artist} ${item.name}`),
+            onClick: () => this.props.openPlayer(`${item.artist} ${item.name}`),
             //href: `https://www.youtube.com/results?search_query=${item.artist} ${item.name}`,
             iconType: 'play',
             size: 's',
@@ -101,23 +95,6 @@ export class HomeView extends Component {
         });
     });
   };
-
-  setYoutubeId = query => {
-    youtubeJSON(query).then((result) => {
-      console.log(result.items[0].id.videoId);
-      this.setState({
-        selectedYoutubeId: result.items[0].id.videoId,
-      });
-    });
-  }
-
-  openPlayer(selectedSong) {
-    console.log(selectedSong);
-    this.setYoutubeId(selectedSong);
-    this.setState({
-      playerOpen: true,
-    });
-  }
 
   emptyResults() {
     this.setState({
@@ -244,10 +221,6 @@ export class HomeView extends Component {
         <EuiFlexGroup alignItems="center">
           <EuiFlexItem>{content}</EuiFlexItem>
         </EuiFlexGroup>
-        <PlayerView
-          playerOpen={this.state.playerOpen}
-          selectedYoutubeId={this.state.selectedYoutubeId}
-        />
       </Fragment>
 
     );

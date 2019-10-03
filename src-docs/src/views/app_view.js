@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { applyTheme, translateUsingPseudoLocale } from '../services';
 
 import { GuidePageChrome } from '../components';
+import { PlayerView } from '../views/player/player_view';
 
 import {
   EuiErrorBoundary,
@@ -15,6 +16,19 @@ import {
 import { keyCodes } from '../../../src/services';
 
 export class AppView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isPlayerOpen: false,
+    }
+    // this.openPlayer = this.openPlayer.bind(this);
+    this.openPlayer = playerQuery => {
+      this.setState(state => ({
+        isPlayerOpen: true,
+        playerQuery: playerQuery,
+      }));
+    };
+  }
 
   updateTheme = () => {
     applyTheme(this.props.theme);
@@ -78,7 +92,14 @@ export class AppView extends Component {
 
           <div className="guidePageContent">
             <EuiContext i18n={i18n}>
-              {React.cloneElement(children, { selectedTheme: theme })}
+              {React.cloneElement(children, {
+                selectedTheme: theme,
+                isPlayerOpen: this.state.isPlayerOpen,
+                openPlayer: this.openPlayer })
+              }
+              <PlayerView
+                isPlayerOpen={this.state.isPlayerOpen}
+                playerQuery={this.state.playerQuery}/>
             </EuiContext>
           </div>
         </EuiPageBody>
