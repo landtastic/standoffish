@@ -83,11 +83,10 @@ export class HomeView extends Component {
         let songList = this.state.results.songs.map((item,key) => {
           return {
             label: `${item.artist} - ${item.name}`,
-            //onClick: () => player.playSong(`${item.artist} ${item.name}`),
             onClick: () => this.props.openPlayer(`${item.artist} ${item.name}`),
-            //href: `https://www.youtube.com/results?search_query=${item.artist} ${item.name}`,
             iconType: 'play',
             size: 's',
+            wrapText: true,
           };
         });
         this.setState({
@@ -190,15 +189,19 @@ export class HomeView extends Component {
                     <h6>Albums</h6>
                  </EuiText>
                  <EuiSpacer size="m" />
-                 <EuiFlexGrid  columns={2} gutterSize="m">
+                 <EuiFlexGrid columns={2} gutterSize="m">
                      {this.state.results.albums.map((item,key) => (
                          <EuiFlexItem key={key}>
-                             <EuiImage
-                                 hasShadow
-                                 caption={item.name}
-                                 alt={item.name}
-                                 url={item.image[3]["#text"]}
-                               />
+                             <Link to={{
+                               pathname: `album/${slugify(item.artist)}/${slugify(item.name)}`,
+                             }}>
+                               <EuiImage
+                                   hasShadow
+                                   caption={`${item.artist} - ${item.name}`}
+                                   alt={item.name}
+                                   url={item.image[3]["#text"]}
+                                 />
+                              </Link>
                          </EuiFlexItem>
                     ))}
                  </EuiFlexGrid>

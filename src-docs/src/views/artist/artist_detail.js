@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from 'react';
+import { Link } from 'react-router';
+import { slugify } from '../../../../src/services/utils';
 import {
   EuiSpacer,
   EuiFlexGroup,
@@ -62,7 +64,6 @@ export class ArtistDetailView extends Component {
     if (isLastPartNum) {
       let newArtistName = artistName.split(' ');
       newArtistName.pop();
-      console.log(newArtistName);
       artistName = newArtistName.join(' ');
     }
 
@@ -84,9 +85,9 @@ export class ArtistDetailView extends Component {
         return {
           label: item.name,
           onClick: () => openPlayer(`${item.artist.name} ${item.name}`),
-          //href: `https://www.youtube.com/results?search_query=${item.artist.name} ${item.name}`,
           iconType: 'play',
           size: 's',
+          wrapText: true,
         };
       });
       this.setState({
@@ -128,12 +129,16 @@ export class ArtistDetailView extends Component {
               <EuiFlexGrid columns={3} gutterSize="s">
                 {this.state.results.albums.map((item, key) => (
                   <EuiFlexItem key={key}>
-                    <EuiImage
-                      hasShadow
-                      caption={item.name}
-                      alt={item.name}
-                      url={item.image[3]['#text']}
-                    />
+                    <Link to={{
+                      pathname: `album/${slugify(item.artist.name)}/${slugify(item.name)}`,
+                    }}>
+                      <EuiImage
+                        hasShadow
+                        caption={item.name}
+                        alt={item.name}
+                        url={item.image[3]['#text']}
+                      />
+                    </Link>
                   </EuiFlexItem>
                 ))}
               </EuiFlexGrid>

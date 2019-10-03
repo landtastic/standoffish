@@ -79,7 +79,7 @@ export class PlayerView extends Component {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <ReactPlayer
-                url={`http://www.youtube.com/embed/${this.state.selectedYoutubeId}`}
+                url={`https://www.youtube.com/embed/${this.state.selectedYoutubeId}`}
                 height={113}
                 width={200}
                 controls

@@ -51,6 +51,7 @@
 }
 
 .euiListGroupItem__label {
+  color: $euiLinkColor;
   //white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -70,6 +71,7 @@
 }
 
 .euiListGroupItem__icon {
+  color: $euiColorPrimary;
   margin-right: $euiSizeM;
   flex-grow: 0;
   flex-shrink: 0;
