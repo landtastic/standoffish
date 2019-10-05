@@ -10,6 +10,7 @@ import { AppContainer } from './views/app_container';
 import { HomeView } from './views/home/home_view';
 import { NotFoundView } from './views/not_found/not_found_view';
 import { ArtistDetailView } from './views/artist/artist_detail';
+import { AlbumDetailView } from './views/album/album_detail';
 
 import { registerTheme } from './services';
 
@@ -31,7 +32,12 @@ childRoutes.push(
   {
     path: '/artist/:artistName',
     component: ArtistDetailView,
-    name: 'artist',
+    name: 'Artist Info',
+  },
+  {
+    path: '/album/:artistName/:albumName',
+    component: AlbumDetailView,
+    name: 'Album Info',
   },
   {
     path: '*',

@@ -16,44 +16,22 @@ export class AlbumDetailView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      artistName: '...',
       results: {
-        albums: [],
-        toptracks: [],
+          tracks: [],
+          image: '',
       },
-      toptrackList: [],
     };
+    const urlParts = this.props.location.pathname.split('/');
+    const lastTwo = urlParts.slice(-2);
+    this.artistName = lastTwo[0].replace(/-/g, ' ');
+    this.albumName = lastTwo[1].replace(/-/g, ' ');
   }
 
   componentDidMount() {
-    let artistName = this.props.location.pathname
-      .split('/')
-      .pop()
-      .replace(/-/g, ' ');
-
-    // hacky fix for routes like robert-smith-2
-    let isLastPartNum = /^\d+$/.test(artistName[artistName.length-1]);
-    if (isLastPartNum) {
-      let newArtistName = artistName.split(' ');
-      newArtistName.pop();
-      artistName = newArtistName.join(' ');
-    }
-
     const openPlayer = this.props.openPlayer;
 
-    const combinedData = { albums: {}, toptracks: {} };
-    Promise.all([albums(artistName), toptracks(artistName)]).then(values => {
-      combinedData.albums = values[0].topalbums.album;
-      combinedData.toptracks = values[1].toptracks.track;
-      this.setState({
-        artistName: values[0].topalbums.album[0].artist.name,
-        results: combinedData,
-      });
-
-      const toptrackList = this.state.results.toptracks.map(function(
-        item,
-        key
-      ) {
+    albumTracks(this.artistName, this.albumName).then(values => {
+      const trackList = values.album.tracks.track.map(function(item,key) {
         return {
           label: item.name,
           onClick: () => openPlayer(`${item.artist.name} ${item.name}`),
@@ -62,8 +40,24 @@ export class AlbumDetailView extends Component {
           wrapText: true,
         };
       });
+
+      // const resultsObj = values.album.map(function(item,key) {
+      //   return {
+      //     artist: item.artist.name,
+      //     name: item.name,
+      //     tracks: item.tracks.track.name,
+      //     image: item.image[5]['#text'],
+      //   };
+      // });
+
       this.setState({
-        toptrackList: toptrackList,
+        results: {
+          artist: values.album.artist,
+          name: values.album.name,
+          tracks: values.album.tracks.track.name,
+          image: values.album.image[5]['#text'],
+        },
+        trackList,
       });
       console.log(this.state);
     });
@@ -74,46 +68,27 @@ export class AlbumDetailView extends Component {
       this.state.results.length < 1 || (
         <Fragment>
           <EuiText>
-            <h1 className="guideTitle">{this.state.artistName}</h1>
+            <h1 className="guideTitle">{this.state.results.artist} - {this.state.results.name}</h1>
           </EuiText>
           <EuiFlexGroup responsive={false}>
-            <EuiFlexItem className="toptracksResults" grow={false}>
+            <EuiFlexItem className="tracks">
               <EuiSpacer size="s" />
-              <EuiText>
-                <h6>Top Songs</h6>
-              </EuiText>
-              <EuiSpacer size="m" />
-              <EuiFlexGrid columns={1} gutterSize="s">
-                <EuiListGroup
-                  flush={true}
-                  bordered={false}
-                  listItems={this.state.toptrackList}
-                />
-              </EuiFlexGrid>
+              <EuiListGroup
+                flush={true}
+                bordered={false}
+                listItems={this.state.trackList}
+              />
             </EuiFlexItem>
 
             <EuiFlexItem className="albumResults">
               <EuiSpacer size="s" />
-              <EuiText>
-                <h6>Albums</h6>
-              </EuiText>
-              <EuiSpacer size="m" />
-              <EuiFlexGrid columns={3} gutterSize="s">
-                {this.state.results.albums.map((item, key) => (
-                  <EuiFlexItem key={key}>
-                    <Link to={{
-                      pathname: `album/${slugify(item.artist.name)}/${slugify(item.name)}`,
-                    }}>
-                      <EuiImage
-                        hasShadow
-                        caption={item.name}
-                        alt={item.name}
-                        url={item.image[3]['#text']}
-                      />
-                    </Link>
-                  </EuiFlexItem>
-                ))}
-              </EuiFlexGrid>
+              <EuiImage
+                hasShadow
+                size="fullWidth"
+                style={{ maxWidth: 500 }}
+                alt={this.state.results.name}
+                url={this.state.results.image}
+              />
             </EuiFlexItem>
           </EuiFlexGroup>
         </Fragment>

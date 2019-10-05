@@ -50,10 +50,7 @@ export class ArtistDetailView extends Component {
         results: combinedData,
       });
 
-      const toptrackList = this.state.results.toptracks.map(function(
-        item,
-        key
-      ) {
+      const toptrackList = this.state.results.toptracks.map(function(item,key) {
         return {
           label: item.name,
           onClick: () => openPlayer(`${item.artist.name} ${item.name}`),
@@ -65,7 +62,6 @@ export class ArtistDetailView extends Component {
       this.setState({
         toptrackList: toptrackList,
       });
-      console.log(this.state);
     });
   }
 
