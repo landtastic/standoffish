@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router';
+import { artists, songs, albums } from '../../../../src/utils/api/fetch';
 import { slugify } from '../../../../src/services/utils';
 import {
   EuiSpacer,
@@ -13,39 +14,7 @@ import {
   EuiSearchBar,
 } from '../../../../src/components';
 
-const scrobblerURL = 'https://ws.audioscrobbler.com/2.0/';
-const LFapiKey = '946a0b231980d52f90b8a31e15bccb16';
-const discogsKey = 'key=eJhCgHcNJQgAdvtQiGfi&secret=AailmhUCMBAkvuggupoBQkncHPNuUbSw';
-
-const artists = query => {
-  return fetch(`https://api.discogs.com/database/search?&q=${query}~&type=artist&per_page=9&page=1&${discogsKey}`)
-  // return fetch(`${scrobblerURL}?method=artist.search&api_key=${LFapiKey}&limit=6&format=json&artist=${query}`)
-  // return fetch(`http://musicbrainz.org/ws/2/artist/?query=artist:${query}~&fmt=json`)
-  // return fetch(`https://itunes.apple.com/search?term=${query}&limit=6`)
-  .then(response => response.json())
-}
-
-const songs = query => {
-  //return fetch(`https://api.discogs.com/database/search?&track=${query}&type=master&per_page=7&page=1&${discogsKey}`)
-  return fetch(`${scrobblerURL}?method=track.search&api_key=${LFapiKey}&limit=30&format=json&track=${query}`)
-  .then(response => response.json())
-}
-
-const albums = query => {
-  return fetch(`${scrobblerURL}?method=album.search&api_key=${LFapiKey}&limit=9&format=json&album=${query}`)
-  .then(response => response.json())
-}
-
 const initialQuery = EuiSearchBar.Query.MATCH_ALL;
-// const schema = {
-//   strict: false,
-//   fields: {
-//     query: {
-//       type: 'string',
-//     },
-//     es: 'string',
-//   },
-// };
 
 export class HomeView extends Component {
   constructor(props) {
