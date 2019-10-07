@@ -22,6 +22,7 @@ export class ArtistDetailView extends Component {
         toptracks: [],
       },
       toptrackList: [],
+      listGroup: [],
     };
   }
 
@@ -32,45 +33,45 @@ export class ArtistDetailView extends Component {
       .pop()
       .replace(/-/g, ' ');
 
-    // hacky fix for routes like robert-smith-2
-    // let isLastPartNum = /^\d+$/.test(artistName[artistName.length-1]);
-    // if (isLastPartNum) {
-    //   let newArtistName = artistName.split(' ');
-    //   newArtistName.pop();
-    //   artistName = newArtistName.join(' ');
-    // }
-
     const combinedData = { albums: {}, toptracks: {} };
     Promise.all([albumsBy(artistName), toptracksBy(artistName)]).then(values => {
       combinedData.albums = values[0].topalbums.album;
       combinedData.toptracks = values[1].toptracks.track;
-      this.setState({
-        artistName: values[0].topalbums.album[0].artist.name,
-        results: combinedData,
-      });
 
-      const toptrackList = combinedData.toptracks.map(function(item,key) {
-        console.log(item);
+      const toptrackList = combinedData.toptracks.map((item,key) => {
         return {
           key,
           artist: item.artist.name,
           song: item.name,
-          label: item.name,
+        }
+      });
+
+      this.setState({
+        toptrackList: toptrackList,
+      });
+
+      const listGroup = toptrackList.map((item,key) => {
+        return {
+          label: item.song,
           onClick: () => {
             openPlayer(this.state.toptrackList, key)
           },
           iconType: 'play',
           size: 's',
           wrapText: true,
-        };
+        }
       });
+
       this.setState({
-        toptrackList: toptrackList,
+        artistName: values[0].topalbums.album[0].artist.name,
+        results: combinedData,
+        listGroup,
       });
     });
   }
 
   render() {
+
     return (
       this.state.results.length < 1 || (
         <Fragment>
@@ -88,7 +89,7 @@ export class ArtistDetailView extends Component {
                 <EuiListGroup
                   flush={true}
                   bordered={false}
-                  listItems={this.state.toptrackList}
+                  listItems={this.state.listGroup}
                 />
               </EuiFlexGrid>
             </EuiFlexItem>

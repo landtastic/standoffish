@@ -57,7 +57,6 @@ export class AlbumDetailView extends Component {
         },
         trackList,
       });
-      console.log(this.state);
     });
   }
 
