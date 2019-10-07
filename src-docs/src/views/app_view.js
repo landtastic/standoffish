@@ -31,7 +31,6 @@ export class AppView extends Component {
         currentIndex,
       }));
     };
-    this.openPlayer = this.openPlayer.bind(this);
   }
 
   updateTheme = () => {

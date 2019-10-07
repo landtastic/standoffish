@@ -29,8 +29,6 @@ export class PlayerView extends Component {
       this.setState({
         index: currentIndex,
       });
-    }
-    if (prevProps.playlistObj !== playlistObj) {
       this.playSong(playlistObj, currentIndex);
     }
   }
@@ -50,16 +48,22 @@ export class PlayerView extends Component {
   playNextSong = () => {
     const {index} = this.state;
     const {playlistObj, currentIndex} = this.props;
-  	(index + 1 === playlistObj.length) ?
-      this.setState({ index: 0 }) : this.setState({ index: index + 1 });
+  	if (index + 1 === playlistObj.length) {
+      this.setState({ index: 0 })
+    } else {
+      this.setState({ index: index + 1 });
+    }
     this.playSong(playlistObj, this.state.index);
   }
 
   playPrevSong = () => {
     const {index} = this.state;
     const {playlistObj, currentIndex} = this.props;
-    (index - 1 < 0) ?
-      this.setState({ index: 0 }) : this.setState({ index: index - 1 });
+    if (index - 1 < 0) {
+      this.setState({ index: 0 })
+    } else {
+      this.setState({ index: index - 1 });
+    }
     this.playSong(playlistObj, this.state.index);
   }
 
