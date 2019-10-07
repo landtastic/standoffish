@@ -20,6 +20,7 @@ export class AlbumDetailView extends Component {
           tracks: [],
           image: '',
       },
+      trackList: [],
     };
     const urlParts = this.props.location.pathname.split('/');
     const lastTwo = urlParts.slice(-2);
@@ -28,27 +29,24 @@ export class AlbumDetailView extends Component {
   }
 
   componentDidMount() {
-    const openPlayer = this.props.openPlayer;
+    const {openPlayer} = this.props;
 
     albumTracks(this.artistName, this.albumName).then(values => {
-      const trackList = values.album.tracks.track.map(function(item,key) {
+      const trackList = values.album.tracks.track.map((item,key) => {
         return {
+          key,
+          artist: item.artist.name,
+          song: item.name,
           label: item.name,
-          onClick: () => openPlayer(`${item.artist.name} ${item.name}`),
+          //onClick: () => openPlayer(`${item.artist.name} ${item.name}`),
+          onClick: () => {
+            openPlayer(this.state.trackList, key)
+          },
           iconType: 'play',
           size: 's',
           wrapText: true,
         };
       });
-
-      // const resultsObj = values.album.map(function(item,key) {
-      //   return {
-      //     artist: item.artist.name,
-      //     name: item.name,
-      //     tracks: item.tracks.track.name,
-      //     image: item.image[5]['#text'],
-      //   };
-      // });
 
       this.setState({
         results: {

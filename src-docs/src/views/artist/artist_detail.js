@@ -26,6 +26,7 @@ export class ArtistDetailView extends Component {
   }
 
   componentDidMount() {
+    const {openPlayer} = this.props;
     let artistName = this.props.location.pathname
       .split('/')
       .pop()
@@ -39,8 +40,6 @@ export class ArtistDetailView extends Component {
     //   artistName = newArtistName.join(' ');
     // }
 
-    const openPlayer = this.props.openPlayer;
-
     const combinedData = { albums: {}, toptracks: {} };
     Promise.all([albumsBy(artistName), toptracksBy(artistName)]).then(values => {
       combinedData.albums = values[0].topalbums.album;
@@ -50,10 +49,16 @@ export class ArtistDetailView extends Component {
         results: combinedData,
       });
 
-      const toptrackList = this.state.results.toptracks.map(function(item,key) {
+      const toptrackList = combinedData.toptracks.map(function(item,key) {
+        console.log(item);
         return {
+          key,
+          artist: item.artist.name,
+          song: item.name,
           label: item.name,
-          onClick: () => openPlayer(`${item.artist.name} ${item.name}`),
+          onClick: () => {
+            openPlayer(this.state.toptrackList, key)
+          },
           iconType: 'play',
           size: 's',
           wrapText: true,

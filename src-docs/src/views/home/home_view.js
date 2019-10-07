@@ -31,7 +31,7 @@ export class HomeView extends Component {
     };
   }
 
-  onChange = ({ query, queryText, error }) => {
+  onChange = ({ query, queryText, error, songList }) => {
 
     if (queryText == '') {
       this.emptyResults();
@@ -49,10 +49,16 @@ export class HomeView extends Component {
           query,
         });
 
-        let songList = this.state.results.songs.map((item,key) => {
+        const {openPlayer} = this.props;
+        let songList = this.state.results.songs.map((item, key) => {
           return {
+            key,
+            artist: item.artist,
+            song: item.name,
             label: `${item.artist} - ${item.name}`,
-            onClick: () => this.props.openPlayer(`${item.artist} ${item.name}`),
+            onClick: () => {
+              openPlayer(this.state.songList, key)
+            },
             iconType: 'play',
             size: 's',
             wrapText: true,
@@ -109,7 +115,7 @@ export class HomeView extends Component {
   }
 
   render() {
-    const { query, queryText } = this.state;
+    const { query, queryText, results, songList } = this.state;
 
     // const content = this.renderError() ||
     const content = (query == null) || (
@@ -121,7 +127,7 @@ export class HomeView extends Component {
                  </EuiText>
                  <EuiSpacer size="m" />
                  <EuiFlexGrid columns={2} gutterSize="m">
-                 {this.state.results.artists.map((item,key) => (
+                 {results.artists.map((item,key) => (
                       <EuiFlexItem
                         key={key}
                         grow={key == 0 ? false : true}
@@ -149,7 +155,7 @@ export class HomeView extends Component {
                     <EuiListGroup
                        flush={true}
                        bordered={false}
-                       listItems={this.state.songList}
+                       listItems={songList}
                     />
                </EuiFlexItem>
 
@@ -159,7 +165,7 @@ export class HomeView extends Component {
                  </EuiText>
                  <EuiSpacer size="m" />
                  <EuiFlexGrid columns={2} gutterSize="m">
-                     {this.state.results.albums.map((item,key) => (
+                     {results.albums.map((item,key) => (
                          <EuiFlexItem key={key}>
                              <Link to={{
                                pathname: `album/${slugify(item.artist)}/${slugify(item.name)}`,

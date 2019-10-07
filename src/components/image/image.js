@@ -123,7 +123,8 @@ export class EuiImage extends Component {
     }
 
     const fallbackImg =
-      'https://ae01.alicdn.com/kf/HTB1sRh2xXmWBuNjSspdq6zugXXan.jpg_q50.jpg';
+      'http://images.45cat.com/sex-pistols-anarchy-in-the-uk-1976-13.jpg';
+      //'https://ae01.alicdn.com/kf/HTB1sRh2xXmWBuNjSspdq6zugXXan.jpg_q50.jpg';
 
     return (
       <button

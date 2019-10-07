@@ -42,3 +42,8 @@ export function albumTracks(artist, album) {
     response => response.json()
   );
 };
+
+export function youtubeSearch(query) {
+  return fetch(`https://www.googleapis.com/youtube/v3/search?&q=${query}&maxResults=10&part=snippet&key=AIzaSyDlcHPnr5gJr1_pBSvVSRtFudfpIUppfjM`)
+  .then(response => response.json())
+}

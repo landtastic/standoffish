@@ -20,12 +20,15 @@ export class AppView extends Component {
     super(props);
     this.state = {
       isPlayerOpen: false,
+      playlistObj: {},
+      currentIndex: 0,
     }
-    // this.openPlayer = this.openPlayer.bind(this);
-    this.openPlayer = playerQuery => {
+
+    this.openPlayer = (playlistObj, currentIndex) => {
       this.setState(state => ({
         isPlayerOpen: true,
-        playerQuery: playerQuery,
+        playlistObj: playlistObj,
+        currentIndex,
       }));
     };
   }
@@ -99,7 +102,8 @@ export class AppView extends Component {
               }
               <PlayerView
                 isPlayerOpen={this.state.isPlayerOpen}
-                playerQuery={this.state.playerQuery}/>
+                playlistObj={this.state.playlistObj}
+                currentIndex={this.state.currentIndex} />
             </EuiContext>
           </div>
         </EuiPageBody>
