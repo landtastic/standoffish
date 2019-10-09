@@ -61,11 +61,12 @@ export class AlbumDetailView extends Component {
   }
 
   render() {
+    const {results, trackList} = this.state;
     return (
-      this.state.results.length < 1 || (
+      results.length < 1 || (
         <Fragment>
           <EuiText>
-            <h1 className="guideTitle">{this.state.results.artist} - {this.state.results.name}</h1>
+            <h1 className="guideTitle">{results.artist} - {results.name}</h1>
           </EuiText>
           <EuiFlexGroup responsive={false}>
             <EuiFlexItem className="tracks">
@@ -73,7 +74,7 @@ export class AlbumDetailView extends Component {
               <EuiListGroup
                 flush={true}
                 bordered={false}
-                listItems={this.state.trackList}
+                listItems={trackList}
               />
             </EuiFlexItem>
 
@@ -83,8 +84,8 @@ export class AlbumDetailView extends Component {
                 hasShadow
                 size="fullWidth"
                 style={{ maxWidth: 500 }}
-                alt={this.state.results.name}
-                url={this.state.results.image}
+                alt={results.name}
+                url={results.image}
               />
             </EuiFlexItem>
           </EuiFlexGroup>

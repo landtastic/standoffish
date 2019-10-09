@@ -14,57 +14,46 @@ export class PlayerView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      results: {},
+      results: [],
       selectedYoutubeId: null,
-      index: 0,
-      isPlaying: true,
+      isPlaying: false,
     };
 
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {currentIndex, playlistObj} = this.props;
+    const {currentIndex, playlist} = this.props;
 
-    if (prevProps.currentIndex !== currentIndex) {
-      this.setState({
-        index: currentIndex,
-      });
-      this.playSong(playlistObj, currentIndex);
+    if (prevProps.currentIndex !== currentIndex || prevProps.playlist.length !== playlist.length) {
+      this.playSong(playlist, currentIndex);
     }
   }
 
-  playSong = (playlistObj, currentIndex) => {
-    console.log(playlistObj);
-    let currentSong = `${playlistObj[currentIndex].artist} ${playlistObj[currentIndex].song}`;
+  playSong = (playlist, currentIndex) => {
+    let currentSong = `${playlist[currentIndex].artist} ${playlist[currentIndex].song}`;
     console.log(currentSong);
     youtubeSearch(currentSong).then((result) => {
       this.setState({
         results: result.items,
         selectedYoutubeId: result.items[0].id.videoId,
+        isPlaying: true,
       });
     });
   }
 
   playNextSong = () => {
-    const {index} = this.state;
-    const {playlistObj, currentIndex} = this.props;
-  	if (index + 1 === playlistObj.length) {
-      this.setState({ index: 0 })
-    } else {
-      this.setState({ index: index + 1 });
-    }
-    this.playSong(playlistObj, this.state.index);
+    const {playlist, currentIndex, openPlayer} = this.props;
+    let index = currentIndex;
+  	(currentIndex + 1 === playlist.length) ? index = 0 : index++;
+    openPlayer(playlist, index);
   }
 
   playPrevSong = () => {
-    const {index} = this.state;
-    const {playlistObj, currentIndex} = this.props;
-    if (index - 1 < 0) {
-      this.setState({ index: 0 })
-    } else {
-      this.setState({ index: index - 1 });
-    }
-    this.playSong(playlistObj, this.state.index);
+    // const {index} = this.state;
+    const {playlist, currentIndex, openPlayer} = this.props;
+    let index = currentIndex;
+    (currentIndex - 1 < 0) ? index = 0 : index--;
+    openPlayer(playlist, index);
   }
 
   togglePlay = () => {
