@@ -8,6 +8,7 @@ import {
   EuiIcon,
   EuiLink,
   EuiText,
+  EuiHideFor,
 } from '../../../../src/components';
 
 export class PlayerView extends Component {
@@ -22,7 +23,7 @@ export class PlayerView extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {currentIndex, playlist} = this.props;
+    const { currentIndex, playlist } = this.props;
 
     if (prevProps.currentIndex !== currentIndex || prevProps.playlist.length !== playlist.length) {
       this.playSong(playlist, currentIndex);
@@ -42,17 +43,16 @@ export class PlayerView extends Component {
   }
 
   playNextSong = () => {
-    const {playlist, currentIndex, openPlayer} = this.props;
+    const { playlist, currentIndex, openPlayer } = this.props;
     let index = currentIndex;
   	(currentIndex + 1 === playlist.length) ? index = 0 : index++;
     openPlayer(playlist, index);
   }
 
   playPrevSong = () => {
-    // const {index} = this.state;
-    const {playlist, currentIndex, openPlayer} = this.props;
+    const { playlist, currentIndex, openPlayer } = this.props;
     let index = currentIndex;
-    (currentIndex - 1 < 0) ? index = 0 : index--;
+    (currentIndex - 1 < 0) ? index = playlist.length-1 : index--;
     openPlayer(playlist, index);
   }
 
@@ -69,15 +69,17 @@ export class PlayerView extends Component {
   render() {
 
     let bottomBar;
-    const {isPlaying, selectedYoutubeId} = this.state;
+    const { isPlaying, selectedYoutubeId } = this.state;
 
     if (this.props.isPlayerOpen) {
       bottomBar = (
         <EuiBottomBar paddingSize="s">
-          <EuiFlexGroup justifyContent="spaceAround" responsive={false} alignItems="center">
-            <EuiFlexItem grow={1}>
-              &nbsp;
-            </EuiFlexItem>
+          <EuiFlexGroup justifyContent="spaceAround" responsive={false} alignItems="center" gutterSize="none">
+            <EuiHideFor sizes={['xs', 's']}>
+              <EuiFlexItem grow={1} >
+                &nbsp;
+              </EuiFlexItem>
+            </EuiHideFor>
             <EuiFlexItem grow={4}>
               <EuiFlexGroup gutterSize="none" responsive={false}>
                 <EuiFlexItem>

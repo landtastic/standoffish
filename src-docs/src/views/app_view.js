@@ -27,7 +27,7 @@ export class AppView extends Component {
     this.openPlayer = (playlist, currentIndex) => {
       this.setState(state => ({
         isPlayerOpen: true,
-        playlist: playlist,
+        playlist,
         currentIndex,
       }));
     };
@@ -77,7 +77,7 @@ export class AppView extends Component {
       formatNumber: value => new Intl.NumberFormat(locale).format(value),
     };
 
-
+    const { isPlayerOpen, openPlayer, playlist, currentIndex } = this.state;
 
     return (
       <EuiPage className="guidePage">
@@ -97,14 +97,16 @@ export class AppView extends Component {
             <EuiContext i18n={i18n}>
               {React.cloneElement(children, {
                 selectedTheme: theme,
-                isPlayerOpen: this.state.isPlayerOpen,
-                openPlayer: this.openPlayer })
+                isPlayerOpen: isPlayerOpen,
+                openPlayer: this.openPlayer,
+                currentIndex,
+                })
               }
               <PlayerView
-                isPlayerOpen={this.state.isPlayerOpen}
+                isPlayerOpen={isPlayerOpen}
                 openPlayer={this.openPlayer}
-                playlist={this.state.playlist}
-                currentIndex={this.state.currentIndex} />
+                playlist={playlist}
+                currentIndex={currentIndex} />
             </EuiContext>
           </div>
         </EuiPageBody>

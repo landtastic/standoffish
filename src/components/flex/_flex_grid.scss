@@ -97,3 +97,11 @@ $fractions: (
     column-count: 1 !important;
   }
 }
+
+@include euiBreakpoint('xs', 's') {
+  .euiFlexGrid.euiFlexGrid--responsive.searchResults, .searchResults .euiFlexGrid.euiFlexGrid--responsive {
+    // sass-lint:disable-block no-important
+    column-count: 2 !important;
+    display: block;
+  }
+}

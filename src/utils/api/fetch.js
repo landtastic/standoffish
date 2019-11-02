@@ -4,7 +4,7 @@ const LFapiKey = '946a0b231980d52f90b8a31e15bccb16';
 const discogsKey = 'key=eJhCgHcNJQgAdvtQiGfi&secret=AailmhUCMBAkvuggupoBQkncHPNuUbSw';
 
 export function artists(query) {
-  return fetch(`https://api.discogs.com/database/search?&q=${query}~&type=artist&per_page=9&page=1&${discogsKey}`)
+  return fetch(`https://api.discogs.com/database/search?&q=${query}~&type=artist&per_page=5&page=1&${discogsKey}`)
   // return fetch(`${scrobblerURL}?method=artist.search&api_key=${LFapiKey}&limit=6&format=json&artist=${query}`)
   // return fetch(`http://musicbrainz.org/ws/2/artist/?query=artist:${query}~&fmt=json`)
   // return fetch(`https://itunes.apple.com/search?term=${query}&limit=6`)

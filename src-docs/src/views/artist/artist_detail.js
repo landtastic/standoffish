@@ -27,7 +27,7 @@ export class ArtistDetailView extends Component {
   }
 
   componentDidMount() {
-    const {openPlayer} = this.props;
+    const { openPlayer } = this.props;
     let artistName = this.props.location.pathname
       .split('/')
       .pop()
@@ -72,11 +72,13 @@ export class ArtistDetailView extends Component {
 
   render() {
 
+    const { results, artistName, listGroup } = this.state;
+
     return (
-      this.state.results.length < 1 || (
+      results.length < 1 || (
         <Fragment>
           <EuiText>
-            <h1 className="guideTitle">{this.state.artistName}</h1>
+            <h1 className="guideTitle">{artistName}</h1>
           </EuiText>
           <EuiFlexGroup responsive={false}>
             <EuiFlexItem className="toptracksResults" grow={3} style={{ minWidth: 150 }}>
@@ -89,7 +91,7 @@ export class ArtistDetailView extends Component {
                 <EuiListGroup
                   flush={true}
                   bordered={false}
-                  listItems={this.state.listGroup}
+                  listItems={listGroup}
                 />
               </EuiFlexGrid>
             </EuiFlexItem>
@@ -101,7 +103,7 @@ export class ArtistDetailView extends Component {
               </EuiText>
               <EuiSpacer size="m" />
               <EuiFlexGrid columns={3} gutterSize="s">
-                {this.state.results.albums.map((item, key) => (
+                {results.albums.map((item, key) => (
                   <EuiFlexItem key={key}>
                     <Link to={{
                       pathname: `album/${slugify(item.artist.name)}/${slugify(item.name)}`,

@@ -49,7 +49,7 @@ export class HomeView extends Component {
           query,
         });
 
-        const {openPlayer} = this.props;
+        const { openPlayer, currentIndex } = this.props;
         let songList = this.state.results.songs.map((item, key) => {
           return {
             key,
@@ -120,7 +120,7 @@ export class HomeView extends Component {
     // const content = this.renderError() ||
     const content = (query == null) || (
         <Fragment>
-            <EuiFlexGrid columns={3} responsive={false} gutterSize="m">
+            <EuiFlexGrid className="searchResults" columns={3} responsive={true} gutterSize="m">
                <EuiFlexItem className="artistResults">
                  <EuiText>
                     <h6>Artists</h6>

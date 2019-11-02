@@ -10,6 +10,7 @@ import {
   EuiImage,
   EuiText,
   EuiListGroup,
+  EuiPopover,
 } from '../../../../src/components';
 
 export class AlbumDetailView extends Component {
@@ -21,6 +22,7 @@ export class AlbumDetailView extends Component {
           image: '',
       },
       trackList: [],
+      isPopoverOpen: false,
     };
     const urlParts = this.props.location.pathname.split('/');
     const lastTwo = urlParts.slice(-2);
@@ -28,8 +30,20 @@ export class AlbumDetailView extends Component {
     this.albumName = lastTwo[1].replace(/-/g, ' ');
   }
 
+  onButtonClick() {
+    this.setState({
+      isPopoverOpen: !this.state.isPopoverOpen,
+    });
+  }
+
+  closePopover() {
+    this.setState({
+      isPopoverOpen: false,
+    });
+  }
+
   componentDidMount() {
-    const {openPlayer} = this.props;
+    const { openPlayer } = this.props;
 
     albumTracks(this.artistName, this.albumName).then(values => {
       const trackList = values.album.tracks.track.map((item,key) => {
@@ -37,14 +51,26 @@ export class AlbumDetailView extends Component {
           key,
           artist: item.artist.name,
           song: item.name,
-          label: item.name,
-          //onClick: () => openPlayer(`${item.artist.name} ${item.name}`),
+          label: `${item.name}`,
           onClick: () => {
             openPlayer(this.state.trackList, key)
           },
           iconType: 'play',
           size: 's',
           wrapText: true,
+          showTooltip: true,
+          extraAction: {
+            color: 'subdued',
+            onClick: (e) => {
+              console.log(`${item.artist.name} - ${item.name}`);
+              this.onButtonClick();
+            },
+            //iconType: favorite1 === 'link1' ? 'pinFilled' : 'pin',
+            iconType: 'plusInCircle',
+            iconSize: 's',
+            'aria-label': 'Favorite link1',
+            // alwaysShow: favorite1 === 'link1',
+          },
         };
       });
 
@@ -61,7 +87,7 @@ export class AlbumDetailView extends Component {
   }
 
   render() {
-    const {results, trackList} = this.state;
+    const { results, trackList } = this.state;
     return (
       results.length < 1 || (
         <Fragment>
