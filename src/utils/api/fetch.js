@@ -1,6 +1,7 @@
 
 const scrobblerURL = 'https://ws.audioscrobbler.com/2.0/';
 const LFapiKey = '946a0b231980d52f90b8a31e15bccb16';
+const YTapiKey = 'AIzaSyBPAXtoUchU_6-B5_IMB8DSZGn3xo8GC9M';
 const discogsKey = 'key=eJhCgHcNJQgAdvtQiGfi&secret=AailmhUCMBAkvuggupoBQkncHPNuUbSw';
 
 export function artists(query) {
@@ -44,6 +45,6 @@ export function albumTracks(artist, album) {
 };
 
 export function youtubeSearch(query) {
-  return fetch(`https://www.googleapis.com/youtube/v3/search?&q=${query}&maxResults=10&part=snippet&key=AIzaSyDlcHPnr5gJr1_pBSvVSRtFudfpIUppfjM`)
+  return fetch(`https://www.googleapis.com/youtube/v3/search?&q=${query}&maxResults=10&part=snippet&key=${YTapiKey}`)
   .then(response => response.json())
 }
